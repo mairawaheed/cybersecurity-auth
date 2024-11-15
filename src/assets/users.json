@@ -1,0 +1,83 @@
+[
+    {
+      "FirstName": "John",
+      "LastName": "Doe",
+      "Username": "johndoe",
+      "Password": "password123",
+      "EmailAddress": "johndoe@example.com",
+      "PhoneNumber": "555-1234"
+    },
+    {
+      "FirstName": "Jane",
+      "LastName": "Smith",
+      "Username": "janesmith",
+      "Password": "mypassword",
+      "EmailAddress": "janesmith@example.com",
+      "PhoneNumber": "555-5678"
+    },
+    {
+      "FirstName": "Robert",
+      "LastName": "Johnson",
+      "Username": "robertj",
+      "Password": "robert123",
+      "EmailAddress": "robertj@example.com",
+      "PhoneNumber": "555-8765"
+    },
+    {
+      "FirstName": "Emily",
+      "LastName": "Davis",
+      "Username": "emilyd",
+      "Password": "emily1234",
+      "EmailAddress": "emilyd@example.com",
+      "PhoneNumber": "555-3456"
+    },
+    {
+      "FirstName": "Michael",
+      "LastName": "Wilson",
+      "Username": "michaelw",
+      "Password": "michael2024",
+      "EmailAddress": "michaelw@example.com",
+      "PhoneNumber": "555-6543"
+    },
+    {
+      "FirstName": "Sarah",
+      "LastName": "Martinez",
+      "Username": "sarahm",
+      "Password": "sarah2024",
+      "EmailAddress": "sarahm@example.com",
+      "PhoneNumber": "555-2345"
+    },
+    {
+      "FirstName": "David",
+      "LastName": "Taylor",
+      "Username": "davidt",
+      "Password": "david1234",
+      "EmailAddress": "davidt@example.com",
+      "PhoneNumber": "555-5432"
+    },
+    {
+      "FirstName": "Sophia",
+      "LastName": "Anderson",
+      "Username": "sophiaa",
+      "Password": "sophia5678",
+      "EmailAddress": "sophiaa@example.com",
+      "PhoneNumber": "555-6789"
+    },
+    {
+      "FirstName": "William",
+      "LastName": "Thomas",
+      "Username": "williamt",
+      "Password": "william123",
+      "EmailAddress": "williamt@example.com",
+      "PhoneNumber": "555-9876"
+    },
+    {
+      "FirstName": "Olivia",
+      "LastName": "Jackson",
+      "Username": "oliviaj",
+      "Password": "olivia2024",
+      "EmailAddress": "oliviaj@example.com",
+      "PhoneNumber": "555-1357"
+    }
+  ]
+  
