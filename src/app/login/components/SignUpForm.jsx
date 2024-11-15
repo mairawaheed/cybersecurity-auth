@@ -9,6 +9,8 @@ import {
 import PasswordStrengthBar from "@/app/login/components/PasswordStrengthBar";
 import { useRouter } from "next/navigation";
 import zxcvbn from "zxcvbn";
+import bcrypt from "bcryptjs";
+
 export default function SignUpForm({ className, children, onSignUpSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -20,9 +22,6 @@ export default function SignUpForm({ className, children, onSignUpSuccess }) {
   const [alertMessage, setAlertMessage] = useState(
     "Failed to sign up. Please try again."
   );
-  const [username, setUsername] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
 
   const hideAlertAfterTimeout = () => {
     setTimeout(() => {
@@ -43,27 +42,36 @@ export default function SignUpForm({ className, children, onSignUpSuccess }) {
       userData[key] = value;
     });
 
+    const hashedPassword = await bcrypt.hash(userData["password"], 10);
+
     const user = {
-      full_name: `${userData["firstName"]} ${userData["lastName"]}`,
+      firstName: userData["firstName"],
+      lastName: userData["lastName"],
       username: userData["username"],
       email: userData["email"],
-      password: userData["password"],
-      biography: "",
-      avatar: "",
+      phone: parseInt(userData["phone"]),
+      password: hashedPassword,
     };
 
     try {
-      const response = await DataSender.registerUser(user);
-      if (response.status === 201) {
-        onSignUpSuccess(user.email);
+      console.log("Saving user data:", user);
+      const response = await fetch(`/api/users`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
+      if (response.status == 201) {
+        onSignUpSuccess(user.firstName, user.email);
       } else {
+        setAlertMessage("Failed to sign up. Please try again.");
         setShowAlert(true);
         hideAlertAfterTimeout();
       }
     } catch (error) {
-      if (error.response.status === 400) {
-        setAlertMessage(error.response.data.detail);
-      }
+      console.error("Failed to save user data:", error);
+      setAlertMessage("Failed to sign up. Please try again.");
       setShowAlert(true);
       hideAlertAfterTimeout();
     }
@@ -146,6 +154,24 @@ export default function SignUpForm({ className, children, onSignUpSuccess }) {
                   />
                 </div>
               </div>
+
+              <div>
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium leading-6 text-black"
+                >
+                  Phone Number
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="number"
+                    className="block w-full rounded-md border-0 py-1.5 px-1.5 text-black shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+
               <div>
                 <div className="flex items-center justify-between">
                   <label
