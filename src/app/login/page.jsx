@@ -4,16 +4,19 @@ import LoginForm from "./components/LoginForm";
 import Image from "next/image";
 const SignUpForm = React.lazy(() => import("./components/SignUpForm"));
 import Logo from "@/assets/logo.png";
+import VerifyEmail from "./components/VerifyEmail";
 
 export default function Page() {
   const imageUrl = Logo.src;
   const [isSigningUp, setShowSignUp] = useState(false);
-  const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [showOTPComponent, setShowOTPComponent] = useState(false);
   const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
 
-  const handleSignUpSuccess = (email) => {
+  const handleSignUpSuccess = (firstName, email) => {
     setEmail(email);
-    setShowEmailDialog(true);
+    setFirstName(firstName);
+    setShowOTPComponent(true);
   };
 
   return (
@@ -22,8 +25,8 @@ export default function Page() {
         <title>Login</title>
         <meta name="description" content="Login Page" />
       </header>
-      <div className="flex flex-col h-screen overflow-hidden">
-        <div className="flex-grow md:flex md:flex-row">
+      <div className="flex flex-col overflow-hidden h-screen">
+        <div className="flex-grow md:flex md:flex-grow">
           <div className="hidden md:block h-full w-1/2 bg-accent">
             <Image
               width="500"
@@ -33,7 +36,7 @@ export default function Page() {
               className="object-contain w-full h-full"
             ></Image>
           </div>
-          <div className="w-full md:w-1/2  overflow-auto bg-white">
+          <div className="w-full md:w-1/2 overflow-auto bg-white h-full">
             {isSigningUp ? (
               <SignUpForm className="" onSignUpSuccess={handleSignUpSuccess}>
                 <p className="text-center text-sm text-gray-500">
@@ -61,11 +64,12 @@ export default function Page() {
             )}
           </div>
         </div>
-        {showEmailDialog && (
+        {showOTPComponent && (
           <VerifyEmail
+            firstName={firstName}
             email={email}
-            openModal={showEmailDialog}
-            setOpenModal={setShowEmailDialog}
+            openModal={showOTPComponent}
+            setOpenModal={setShowOTPComponent}
           ></VerifyEmail>
         )}
       </div>
