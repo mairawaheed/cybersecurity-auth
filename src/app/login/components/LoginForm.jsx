@@ -166,7 +166,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import ForgotPassword from "./ForgotPassword";
 import { useRouter } from "next/navigation";
-import users from "C:/Users/fagra/OneDrive/Desktop/cybersecurity-auth/src/assets/users.json";
 
 export default function LoginForm({ className, children }) {
   const [username, setUsername] = useState("");

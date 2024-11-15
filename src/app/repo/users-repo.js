@@ -28,6 +28,14 @@ class UserRepo {
     }
   }
 
+  async updateUser(id, user) {
+    try {
+      return prisma.user.update({ where: { id }, data: user });
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
+
   async deleteUser(id) {
     try {
       return prisma.user.delete({ where: { id } });

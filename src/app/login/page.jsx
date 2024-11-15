@@ -5,18 +5,30 @@ import Image from "next/image";
 const SignUpForm = React.lazy(() => import("./components/SignUpForm"));
 import Logo from "@/assets/logo.png";
 import VerifyEmail from "./components/VerifyEmail";
+import Fingerprint from "./components/Fingerprint";
 
 export default function Page() {
   const imageUrl = Logo.src;
   const [isSigningUp, setShowSignUp] = useState(false);
   const [showOTPComponent, setShowOTPComponent] = useState(false);
+  const [showFingerprintComponent, setShowFingerprintComponent] =
+    useState(false);
+  const [userId, setUserId] = useState("");
   const [email, setEmail] = useState("");
   const [firstName, setFirstName] = useState("");
 
-  const handleSignUpSuccess = (firstName, email) => {
+  const handleSignUpSuccess = (id, email, firstName) => {
+    console.log("User signed up with id: ", id);
+    setUserId(id);
     setEmail(email);
     setFirstName(firstName);
-    setShowOTPComponent(true);
+    setShowFingerprintComponent(true);
+    // setShowOTPComponent(true);
+  };
+
+  const handleCorrectOTPInput = () => {
+    console.log("Correct OTP input. logging to fingerprint enrollment.");
+    setShowFingerprintComponent(true);
   };
 
   return (
@@ -50,11 +62,11 @@ export default function Page() {
                 </p>
               </SignUpForm>
             ) : (
-              <LoginForm className="z-50">
+              <LoginForm className="">
                 <p className="text-center text-sm text-gray-500">
                   Not a member?{" "}
                   <button
-                    className="font-semibold leading-6 text-primary hover:text-primary-hover"
+                    className="font-semibold leading-6 text-primary hover:text-primary-hover z-10"
                     onClick={(e) => setShowSignUp(true)}
                   >
                     Register
@@ -66,11 +78,20 @@ export default function Page() {
         </div>
         {showOTPComponent && (
           <VerifyEmail
-            firstName={firstName}
+            userId={userId}
             email={email}
+            firstName={firstName}
             openModal={showOTPComponent}
             setOpenModal={setShowOTPComponent}
+            onCorrectOTPInput={handleCorrectOTPInput}
           ></VerifyEmail>
+        )}
+        {showFingerprintComponent && (
+          <Fingerprint
+            userId={userId}
+            openModal={showFingerprintComponent}
+            setOpenModal={setShowFingerprintComponent}
+          ></Fingerprint>
         )}
       </div>
     </>

@@ -5,16 +5,30 @@ import mailLogo from "@/assets/mail.png";
 import emailjs from "emailjs-com";
 
 export default function VerifyEmail({
+  userId,
   firstName,
   email,
   openModal,
   setOpenModal,
+  onCorrectOTPInput,
 }) {
   const [timer, setTimer] = useState(0);
   const [disabled, setDisabled] = useState(false);
   const hasMounted = useRef(false);
   const [generatedOTP, setGeneratedOTP] = useState("");
   const [otp, setOTP] = useState(Array(6).fill(""));
+  const [user, setUser] = useState(null);
+
+  async function fetchUser() {
+    if (!userId) return;
+    const response = await fetch(`/api/users/${userId}`);
+    const data = await response.json();
+    setUser(data);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, [userId]);
 
   useEffect(() => {
     if (!hasMounted.current) {
@@ -93,18 +107,27 @@ export default function VerifyEmail({
     }
   };
 
-  const handleOTPSubmit = () => {
+  async function handleOTPSubmit() {
     const enteredOTP = otp.join("");
     if (enteredOTP === generatedOTP) {
+      user.isVerified = true;
+      console.log("User:", user);
+      await fetch(`/api/users/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      });
       alert("OTP verified successfully!");
       setOpenModal(false);
-      window.location.reload();
+      onCorrectOTPInput();
     } else {
       alert("Invalid OTP. Please try again.");
     }
-  };
+  }
 
-  if (!openModal) return null; // Don't render if modal is not open
+  if (!openModal) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">

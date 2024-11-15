@@ -14,11 +14,19 @@ datasource db {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  firstName String
-  lastName  String
-  username  String
-  email     String
-  phone     Int
-  password  String
+  id          String       @id @unique
+  firstName   String
+  lastName    String
+  username    String
+  email       String
+  phone       Int
+  password    String
+  isVerified  Boolean      @default(false)
+  fingerprint Fingerprint?
+}
+
+model Fingerprint {
+  id     Int    @id @default(autoincrement())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
