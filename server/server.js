@@ -5,7 +5,7 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5001;
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(cors());
 
 // Twilio credentials
@@ -16,16 +16,17 @@ const client = new twilio(accountSid, authToken);
 const otps = new Map();
 
 app.post("/send-otp", (req, res) => {
-  const { phoneNumber } = req.body; 
+  const { phoneNumber } = req.body;
+  console.log("The phone number in server is ", phoneNumber);
 
   const otp = Math.floor(100000 + Math.random() * 900000);
-  const timestamp = Date.now(); 
+  const timestamp = Date.now();
 
   otps.set(phoneNumber, { otp, timestamp });
 
   client.messages
     .create({
-      body: `Thank you for using TripleGaurd. Your OTP is: ${otp}`,
+      body: `Thank you for using TripleGuard. Your OTP is: ${otp}`,
       to: phoneNumber,
       from: "+18775353157",
     })

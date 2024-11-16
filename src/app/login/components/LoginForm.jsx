@@ -180,7 +180,10 @@ export default function LoginForm({ className, children }) {
           </div>
         )}
         {showSMSComponent && (
-          <SMS onCorrectSMSOTPInput={onCorrectSMSOTPInput}></SMS>
+          <SMS
+            onCorrectSMSOTPInput={onCorrectSMSOTPInput}
+            userId={userId}
+          ></SMS>
         )}
         {showFingerprintComponent && (
           <FingerprintLogin

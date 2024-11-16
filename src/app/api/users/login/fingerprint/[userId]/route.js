@@ -26,7 +26,7 @@ export async function POST(request, { params }) {
               console.log("Testing fingerprint...");
             }
           });
-        }, 5001); // Wait for 5 seconds before sending the command
+        }, 5000); // Wait for 5 seconds before sending the command
       });
 
       let responseBuffer = "";

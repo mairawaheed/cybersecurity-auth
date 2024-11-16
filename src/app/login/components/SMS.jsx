@@ -1,25 +1,45 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 
-function SMS({ onCorrectSMSOTPInput }) {
-  const [phoneNumber, setPhoneNumber] = useState("");
+function SMS({ onCorrectSMSOTPInput, userId }) {
+  const [phoneNumber, setPhoneNumber] = useState(0);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [otpSentTimestamp, setOtpSentTimestamp] = useState(null); // Track timestamp of OTP sent
   const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  async function fetchUser() {
+    if (!userId) return;
+    const response = await fetch(`/api/users/${userId}`);
+    const data = await response.json();
+    console.log(data);
+    setUser(data);
+    setPhoneNumber(data.phone);
+  }
+
+  useEffect(() => {
+    fetchUser();
+  }, [userId]);
+
+  useEffect(() => {
+    setUser(user);
+    setPhoneNumber(phoneNumber);
+  }, [user, phoneNumber]);
 
   const handleSendOtp = async () => {
     if (phoneNumber) {
       try {
+        const phoneNumberWithCode = `+974 ${phoneNumber}`;
         // Make a POST request to the backend to send OTP
         const response = await fetch("http://localhost:5001/send-otp", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phoneNumber }),
+          body: JSON.stringify({ phoneNumber: phoneNumberWithCode }),
         });
 
         const data = await response.json();
@@ -68,12 +88,13 @@ function SMS({ onCorrectSMSOTPInput }) {
   const handleSubmit = async () => {
     if (otp.every((digit) => digit !== "")) {
       try {
+        const phoneNumberWithCode = `+974 ${phoneNumber}`;
         const response = await fetch("http://localhost:5001/verify-otp", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phoneNumber, otp: otp.join("") }),
+          body: JSON.stringify({ phoneNumber: phoneNumberWithCode, otp: otp.join("") }),
         });
         const data = await response.json();
         console.log(data);
@@ -93,6 +114,12 @@ function SMS({ onCorrectSMSOTPInput }) {
     }
   };
 
+  useEffect(() => {
+    if (phoneNumber) {
+      handleSendOtp();
+    }
+  }, [phoneNumber]);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
       <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
@@ -100,58 +127,43 @@ function SMS({ onCorrectSMSOTPInput }) {
           {isOtpSent ? "Enter OTP" : "Verify Phone Number"}
         </h2>
         <div className="space-y-4">
-          {!isOtpSent ? (
-            <div>
-              <label className="block text-sm font-medium text-accent">
-                Phone Number
-              </label>
-              <input
-                type="text"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="mt-2 w-full p-3 border border-accent rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-black"
-                placeholder="Enter your phone number"
-              />
-              <button
-                onClick={handleSendOtp}
-                className="w-full mt-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 focus:outline-none"
-              >
-                Send OTP
-              </button>
+          <div>
+            <label className="block text-sm font-medium text-accent">
+              An OTP has been sent to your phone number {phoneNumber}. Please
+              enter it below.
+            </label>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-accent">
+              Enter OTP
+            </label>
+            <div className="flex space-x-2">
+              {otp.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`otp-input-${index}`}
+                  type="text"
+                  value={digit}
+                  onChange={(e) => handleOtpChange(e, index)}
+                  maxLength="1"
+                  className="w-12 h-12 p-3 text-center border border-accent rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-black"
+                  placeholder="-"
+                />
+              ))}
             </div>
-          ) : (
-            <div>
-              <label className="block text-sm font-medium text-accent">
-                Enter OTP
-              </label>
-              <div className="flex space-x-2">
-                {otp.map((digit, index) => (
-                  <input
-                    key={index}
-                    id={`otp-input-${index}`}
-                    type="text"
-                    value={digit}
-                    onChange={(e) => handleOtpChange(e, index)}
-                    maxLength="1"
-                    className="w-12 h-12 p-3 text-center border border-accent rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-black"
-                    placeholder="-"
-                  />
-                ))}
-              </div>
-              <button
-                onClick={handleSubmit}
-                className="w-full mt-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 focus:outline-none"
-              >
-                Submit
-              </button>
-              <button
-                onClick={handleResendOtp}
-                className="w-full mt-4 py-2 bg-secondary text-black rounded-md hover:bg-secondary/80 focus:outline-none"
-              >
-                Resend OTP
-              </button>
-            </div>
-          )}
+            <button
+              onClick={handleSubmit}
+              className="w-full mt-4 py-2 bg-primary text-white rounded-md hover:bg-primary/80 focus:outline-none"
+            >
+              Submit
+            </button>
+            <button
+              onClick={handleResendOtp}
+              className="w-full mt-4 py-2 bg-secondary text-black rounded-md hover:bg-secondary/80 focus:outline-none"
+            >
+              Resend OTP
+            </button>
+          </div>
         </div>
       </div>
     </div>
