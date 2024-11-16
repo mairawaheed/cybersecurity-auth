@@ -10,7 +10,6 @@ import PasswordStrengthBar from "@/app/login/components/PasswordStrengthBar";
 import { useRouter } from "next/navigation";
 import zxcvbn from "zxcvbn";
 import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
 
 export default function SignUpForm({ className, children, onSignUpSuccess }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -44,7 +43,7 @@ export default function SignUpForm({ className, children, onSignUpSuccess }) {
     });
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(userData["password"], salt);
-    const userId = uuidv4();
+    const userId = Math.floor(Math.random() * 300);
     const user = {
       id: userId,
       firstName: userData["firstName"],

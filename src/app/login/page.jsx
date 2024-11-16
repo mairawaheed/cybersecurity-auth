@@ -22,8 +22,7 @@ export default function Page() {
     setUserId(id);
     setEmail(email);
     setFirstName(firstName);
-    setShowFingerprintComponent(true);
-    // setShowOTPComponent(true);
+    setShowOTPComponent(true);
   };
 
   const handleCorrectOTPInput = () => {

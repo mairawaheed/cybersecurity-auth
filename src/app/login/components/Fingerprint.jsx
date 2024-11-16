@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Fingerprint({ userId }) {
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const [hasEnrolled, setHasEnrolled] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [timer, setTimer] = useState(30);
@@ -24,32 +25,23 @@ export default function Fingerprint({ userId }) {
     setStatus("Initializing fingerprint enrollment...");
     setError("");
 
-    try {
-      console.log("attempting to enroll fingerprint for user:", user);
-      const response = await fetch(`/api/fingerprint/${userId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(user),
-      });
+    const response = await fetch(`/api/fingerprint/${userId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setStatus("Fingerprint enrolled successfully.");
-      } else {
-        setStatus("Fingerprint enrollment failed.");
-        setError(
-          data.error || "An error occurred during fingerprint enrollment."
-        );
-      }
-    } catch (err) {
-      console.error("Enrollment failed:", err);
-      setStatus("An error occurred while communicating with the server.");
-      setError(err.message);
-    } finally {
+    if (response.ok) {
+      setStatus("Fingerprint enrolled successfully.");
       setIsEnrolling(false);
+      setHasEnrolled(true);
+      window.location.reload();
+    } else {
+      setIsEnrolling(false);
+      setStatus("Fingerprint enrollment failed.");
+      setError("An error occurred during fingerprint enrollment.");
     }
   };
 
@@ -77,7 +69,6 @@ export default function Fingerprint({ userId }) {
           <h2 className="text-xl font-bold mb-4">Fingerprint Enrollment</h2>
           <hr className="my-4" />
           <div className="space-y-6 flex flex-col items-center">
-            {/* Fingerprint scanning UI placeholder */}
             <div className="w-1/3 h-1/3 bg-gray-300 rounded-full flex justify-center items-center">
               <span className="text-2xl text-gray-600">👆</span>
             </div>
@@ -97,7 +88,11 @@ export default function Fingerprint({ userId }) {
             }`}
             disabled={isEnrolling || disabled}
           >
-            {isEnrolling ? "Scanning..." : "Start Fingerprint Enrollment"}
+            {isEnrolling
+              ? "Scanning..."
+              : hasEnrolled
+              ? "Enrolled"
+              : "Start Fingerprint Enrollment"}
           </button>
         </div>
 
