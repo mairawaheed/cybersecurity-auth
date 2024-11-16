@@ -65,7 +65,7 @@ export default function Page() {
                 <p className="text-center text-sm text-gray-500">
                   Not a member?{" "}
                   <button
-                    className="font-semibold leading-6 text-primary hover:text-primary-hover z-10"
+                    className="font-semibold leading-6 text-primary hover:text-primary-hover z-50"
                     onClick={(e) => setShowSignUp(true)}
                   >
                     Register

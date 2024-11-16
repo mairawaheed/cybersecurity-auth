@@ -45,14 +45,12 @@ app.post("/verify-otp", (req, res) => {
   const { phoneNumber, otp, timestamp } = req.body;
   const storedData = otps.get(phoneNumber);
 
-  // Check if the stored data exists and contains the OTP and timestamp
   if (storedData) {
     const { otp: storedOtp, timestamp } = storedData;
     console.log("storedOtp:", storedOtp);
 
-    // Verify the OTP and check if it's within 60 seconds of being sent
     if (storedOtp.toString() === otp && currentTime - timestamp < 60000) {
-      otps.delete(phoneNumber); // Remove OTP after successful verification
+      otps.delete(phoneNumber); 
       res.status(200).json({ success: true });
     } else if (currentTime - timestamp > 60000) {
       res.status(401).json({ success: false, message: "OTP has expired" });
