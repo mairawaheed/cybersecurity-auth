@@ -23,9 +23,9 @@ export default function FingerprintLogin({
     fetchUser();
   }, [userId]);
 
-  const startFingerprintEnrollment = async () => {
+  const startFingerprintVerification = async () => {
     setIsEnrolling(true);
-    setStatus("Initializing fingerprint enrollment...");
+    setStatus("Initializing fingerprint verification...");
     setError("");
 
     const response = await fetch(`/api/users/login/fingerprint/${userId}`, {
@@ -37,21 +37,21 @@ export default function FingerprintLogin({
     });
 
     if (response.ok) {
-      setStatus("Fingerprint enrolled successfully.");
+      setStatus("Fingerprint verified successfully.");
       setIsEnrolling(false);
       setHasEnrolled(true);
       onCorrectFingerprintInput();
     } else {
       setIsEnrolling(false);
-      setStatus("Fingerprint enrollment failed.");
-      setError("An error occurred during fingerprint enrollment.");
+      setStatus("Fingerprint verified failed.");
+      setError("An error occurred during fingerprint verification.");
     }
   };
 
   const handleResend = () => {
     setTimer(5);
     setDisabled(true);
-    startFingerprintEnrollment();
+    startFingerprintVerification();
   };
 
   React.useEffect(() => {
@@ -69,7 +69,7 @@ export default function FingerprintLogin({
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-800 bg-opacity-50">
       <div className="bg-white rounded-lg p-6 max-w-sm w-full shadow-lg">
         <div className="text-center">
-          <h2 className="text-xl font-bold mb-4">Fingerprint Enrollment</h2>
+          <h2 className="text-xl font-bold mb-4">Fingerprint Verification</h2>
           <hr className="my-4" />
           <div className="space-y-6 flex flex-col items-center">
             <div className="w-1/3 h-1/3 bg-gray-300 rounded-full flex justify-center items-center">
@@ -85,7 +85,7 @@ export default function FingerprintLogin({
 
         <div className="flex justify-center gap-2 my-4">
           <button
-            onClick={startFingerprintEnrollment}
+            onClick={startFingerprintVerification}
             className={`bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 ${
               isEnrolling || disabled ? "cursor-not-allowed opacity-50" : ""
             }`}
@@ -94,17 +94,17 @@ export default function FingerprintLogin({
             {isEnrolling
               ? "Scanning..."
               : hasEnrolled
-              ? "Enrolled"
-              : "Start Fingerprint Enrollment"}
+              ? "Verified"
+              : "Start Fingerprint Verification"}
           </button>
         </div>
 
         <div className="flex items-baseline justify-center w-full mt-4">
           <p className="text-sm leading-relaxed text-gray-500">
-            {status === "Fingerprint enrollment failed." && "Try again?"}
+            {status === "Fingerprint verification failed." && "Try again?"}
           </p>
           &nbsp;
-          {status === "Fingerprint enrollment failed." && (
+          {status === "Fingerprint verification failed." && (
             <a
               onClick={handleResend}
               className={`text-blue-500 text-sm ${
