@@ -18,12 +18,12 @@ export async function POST(request, { params }) {
         console.log("Serial port opened.");
 
         setTimeout(() => {
-          arduinoPort.write(`SIGNUP:${userId}\n`, (err) => {
+          arduinoPort.write(`LOGIN:${userId}\n`, (err) => {
             if (err) {
               console.error("Error writing to Arduino:", err);
               reject("Error writing to Arduino");
             } else {
-              console.log("Enrolling fingerprint...");
+              console.log("Testing fingerprint...");
             }
           });
         }, 5001); // Wait for 5 seconds before sending the command
@@ -36,34 +36,34 @@ export async function POST(request, { params }) {
         responseBuffer += responseFromArduino;
         console.log("Response from Arduino:", responseBuffer);
 
-        if (responseBuffer.includes("SIGNUP_SUCCESS")) {
-          console.log("Fingerprint enrolled successfully.");
+        if (responseBuffer.includes("LOGIN_SUCCESS")) {
+          console.log("Fingerprint verified successfully.");
           try {
-            await fingerprintRepo.addFingerprint({
+            await fingerprintRepo.verifyFingerprint({
               userId: parseInt(userId),
             });
             resolve(
               Response.json(
-                { message: "Fingerprint enrolled successfully." },
+                { message: "Fingerprint verified successfully." },
                 { status: 201 }
               )
             );
           } catch (error) {
-            console.error("Error saving fingerprint data:", error);
+            console.error("Error verifying fingerprint data:", error);
             resolve(
               Response.json(
-                { error: "Error saving fingerprint data" },
+                { error: "Error verifying fingerprint data" },
                 { status: 500 }
               )
             );
           } finally {
             arduinoPort.close();
           }
-        } else if (responseBuffer.includes("SIGNUP_FAIL")) {
-          console.log("Fingerprint enrollment failed.");
+        } else if (responseBuffer.includes("LOGIN_FAIL")) {
+          console.log("Fingerprint verification failed.");
           resolve(
             Response.json(
-              { error: "Fingerprint enrollment failed" },
+              { error: "Fingerprint verification failed" },
               { status: 400 }
             )
           );
@@ -71,12 +71,12 @@ export async function POST(request, { params }) {
         }
       });
     } catch (error) {
-      console.error("Error during enrollment process:", error);
+      console.error("Error during verification process:", error);
       resolve(
         Response.json(
           {
             error:
-              "An error occurred during the fingerprint enrollment process",
+              "An error occurred during the fingerprint verification process",
           },
           { status: 500 }
         )

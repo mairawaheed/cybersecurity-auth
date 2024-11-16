@@ -35,6 +35,16 @@ class FingerprintRepo {
       return { error: error.message };
     }
   }
+
+  async verifyFingerprint(fingerprint) {
+    try {
+      return prisma.fingerprint.findFirst({
+        where: fingerprint,
+      });
+    } catch (error) {
+      return { error: error.message };
+    }
+  }
 }
 
 export default new FingerprintRepo();

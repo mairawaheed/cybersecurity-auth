@@ -42,6 +42,7 @@
     "serialport": "^12.0.0",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
+    "twilio": "^5.3.6",
     "util": "^0.12.5",
     "uuid": "^11.0.3"
   },

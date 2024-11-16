@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
 const prisma = new PrismaClient();
 
 class UserRepo {
@@ -41,6 +42,29 @@ class UserRepo {
       return prisma.user.delete({ where: { id } });
     } catch (error) {
       return { error: error.message };
+    }
+  }
+
+  async validateCredentials(username, password) {
+    try {
+      const user = await prisma.user.findFirst({
+        where: { username },
+      });
+
+      if (!user) {
+        return { userId: null };
+      }
+      const passwordIsValid = await bcrypt.compare(password, user.password);
+      console.log("Password is valid:", passwordIsValid);
+
+      if (!passwordIsValid) {
+        return { userId: null };
+      }
+
+      return { userId: user.id };
+    } catch (error) {
+      console.error("Error checking credentials:", error);
+      return { userId: null };
     }
   }
 }
